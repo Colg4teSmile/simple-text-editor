@@ -13,7 +13,6 @@ typedef struct gap_buffer {
 	unsigned int length;
 } gap_buffer_t;
 
-
 void init_gap_buffer(void);
 void free_gap_buffer(void);
 void reset_gap_buffer(void);
@@ -21,6 +20,8 @@ void insert(char ch);
 void resize(void);
 void insert(char ch);
 void cursor_at(unsigned int);
+const char* get_left_message(void);
+const char* get_right_message(void);
 
 void print_stats(void /*gap_buffer_t* gap_buf_ptr*/);
 

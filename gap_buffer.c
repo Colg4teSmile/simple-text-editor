@@ -90,7 +90,6 @@ void insert(char ch)
 	resize();
 }
 
-
 void cursor_at(unsigned int index)
 {
 	if(index >= gap_buf.length)
@@ -114,7 +113,6 @@ void cursor_at(unsigned int index)
 	}
 }
 
-
 void save_file(const char* filename)
 {
 	FILE* file = fopen(filename,'w');
@@ -125,6 +123,16 @@ void save_file(const char* filename)
 	scanf("%s",gap_buf.left);
 	scan("%s",gap_buf.right + gap_buf. + 1);
 	fclose(file);
+}
+
+const char* get_left_message(void)
+{
+	return gap_buf.left;
+}
+
+const char* get_right_message(void)
+{
+	return gap_buf.right + gap_buf.right_index + 1;
 }
 
 
