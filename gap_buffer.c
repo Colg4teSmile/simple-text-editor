@@ -114,6 +114,20 @@ void cursor_at(unsigned int index)
 	}
 }
 
+
+void save_file(const char* filename)
+{
+	FILE* file = fopen(filename,'w');
+	if(file = NULL)
+	{
+		printf("Error opening %s!!!\\n",filename)
+	}
+	scanf("%s",gap_buf.left);
+	scan("%s",gap_buf.right + gap_buf. + 1);
+	fclose(file);
+}
+
+
 // ***********************
 // TODO: to put in tools.c
 // ***********************
