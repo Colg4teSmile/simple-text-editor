@@ -6,7 +6,7 @@
 
 
 static gap_buffer_t gap_buf;
-gap_buffer_t* gap_buf_ptr;
+gap_buffer_t* gap_buf_ptr = &gap_buf;
 
 void init_gap_buffer(void)
 {
@@ -15,20 +15,21 @@ void init_gap_buffer(void)
 	gap_buf.left_index = 0;
 
 	gap_buf.right = (char*) malloc(MIN_SIZE_GAP_BUFFER_HALF);
-	memset(gap_buf.left, 0, MIN_SIZE_GAP_BUFFER_HALF);
+	memset(gap_buf.right, 0x65, MIN_SIZE_GAP_BUFFER_HALF);
 	gap_buf.right_index = MIN_SIZE_GAP_BUFFER_HALF - 1;
 
 	gap_buf.length = MIN_SIZE_GAP_BUFFER;
 }
 
-//not used, but logically needed
 void free_gap_buffer(void)
 {
 	free(gap_buf.left);
 	gap_buf.left = NULL;
 	//gap_buf.left_index = 0;
 
-	free(gap_buf.right);
+	printf("coglione1\n");
+	//free(gap_buf.right);
+	printf("coglione2\n");
 	gap_buf.right = NULL;
 	//gap_buf.right_index = 0;
 
@@ -39,7 +40,7 @@ void free_gap_buffer(void)
 void resize(void)
 {
 	unsigned int length_tmp = gap_buf.left_index + (gap_buf.length >> 1) - gap_buf.right_index - 1;
-	if(length_tmp >= gap_buf.length)
+	if(length_tmp >= 2 * gap_buf.length)
 	{
 		//double the size of the buffer and copy the data
 		char* buf_left_tmp = (char*)malloc(gap_buf.length);
@@ -85,11 +86,8 @@ void resize(void)
 void insert(char ch)
 {
 	*(gap_buf.left + gap_buf.left_index++) = ch;
+	resize();
 }
-
-
-
-
 
 
 // TODO: to put in tools.c
@@ -98,9 +96,10 @@ void print_stats(void /*gap_buffer_t* gap_buf_ptr*/)
 	printf("***** STATS *****\n");
 	printf("Message:\n");
 	printf("%s",gap_buf_ptr->left);
-	//printf("%s\n\n",gap_buf_ptr->right + gap_buf_ptr->right_index);
-	//printf("Left Index: %d\n",gap_buf_ptr->left_index);
-	//printf("Right Index: %d (length of right buffer: %d)\n",gap_buf_ptr->right_index, gap_buf_ptr->length - gap_buf_ptr->right_index - 1);
-	//printf("Total length of buffer: %d\n",gap_buf_ptr->right_index);
-	printf("*****************\n");
+	printf("%s\n",gap_buf_ptr->right + gap_buf_ptr->right_index);
+	printf("Left Index: %d\n",gap_buf_ptr->left_index);
+	printf("Right Index: %d (length of right buffer: %d)\n",gap_buf_ptr->right_index, gap_buf_ptr->length >> 1 - gap_buf_ptr->right_index - 1);
+	printf("Total length of buffer: %d\n",gap_buf_ptr->length);
+	printf("Total length of the message: %d\n", gap_buf.left_index + (gap_buf.length >> 1) - gap_buf.right_index - 1);
+	printf("*****************\n\n");
 }

@@ -1,8 +1,8 @@
 #ifndef _GAP_BUFFER_MV_
 #define _GAP_BUFFER_MV_
 
-#define MIN_SIZE_GAP_BUFFER 256
-#define MIN_SIZE_GAP_BUFFER_HALF 128
+#define MIN_SIZE_GAP_BUFFER 32
+#define MIN_SIZE_GAP_BUFFER_HALF 16
 
 // structure not needed, because used one time, but still nice to have
 typedef struct gap_buffer {

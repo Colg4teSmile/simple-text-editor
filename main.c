@@ -7,8 +7,13 @@ int main(int argc, char const *argv[])
 	init_gap_buffer();
 	print_stats();
 
-
-	printf("fatto!\n");
+	while(1)
+	{
+		char ch = getchar();
+		insert(ch);
+		//resize();
+		print_stats();
+	}
 
 	return 0;
 }
