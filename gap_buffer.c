@@ -84,10 +84,16 @@ void resize(void)
 }
 
 
-void insert(char ch)
+void insert_char(char ch)
 {
 	*(gap_buf.left + gap_buf.left_index++) = ch;
 	resize();
+}
+
+//TODO
+void insert_string(const char* ch)
+{
+
 }
 
 void cursor_at(unsigned int index)
@@ -115,13 +121,13 @@ void cursor_at(unsigned int index)
 
 void save_file(const char* filename)
 {
-	FILE* file = fopen(filename,'w');
+	FILE* file = fopen(filename,"w");
 	if(file = NULL)
 	{
-		printf("Error opening %s!!!\\n",filename)
+		printf("Error opening %s!!!\\n",filename);
 	}
 	scanf("%s",gap_buf.left);
-	scan("%s",gap_buf.right + gap_buf. + 1);
+	scanf("%s",gap_buf.right + gap_buf.right_index + 1);
 	fclose(file);
 }
 
@@ -133,6 +139,20 @@ const char* get_left_message(void)
 const char* get_right_message(void)
 {
 	return gap_buf.right + gap_buf.right_index + 1;
+}
+
+void delete_char(void)
+{
+	if (gap_buf.left_index > 0)
+	{
+		*(gap_buf.left + gap_buf.left_index--) = '\0';
+	}
+}
+
+// TODO
+void delete_range(unsigned int from, unsigned int to)
+{
+
 }
 
 
