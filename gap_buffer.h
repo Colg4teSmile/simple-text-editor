@@ -16,13 +16,17 @@ typedef struct gap_buffer {
 void init_gap_buffer(void);
 void free_gap_buffer(void);
 void reset_gap_buffer(void);
-void insert(char ch);
+//void insert(char ch);
 void resize(void);
 void insert_char(char ch);
 void insert_string(const char* ch);  //TODO
 void cursor_at(unsigned int);
 const char* get_left_message(void);
 const char* get_right_message(void);
+
+unsigned int get_left_size(void);
+unsigned int get_right_size(void);
+
 void delete_char(void);
 void delete_range(unsigned int from, unsigned int to);  //TODO
 

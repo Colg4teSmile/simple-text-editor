@@ -105,15 +105,15 @@ void cursor_at(unsigned int index)
 	}
 	if(index < gap_buf.left_index)
 	{
-		strncpy(gap_buf.right + gap_buf.right_index - (gap_buf.left_index - index), gap_buf.left + index, gap_buf.left_index - index);
-		memset(gap_buf.left + index, 0, gap_buf.left_index - index);
+		(void)strncpy(gap_buf.right + gap_buf.right_index - (gap_buf.left_index - index), gap_buf.left + index, gap_buf.left_index - index);
+		(void)memset(gap_buf.left + index, 0, gap_buf.left_index - index);
 		gap_buf.left_index = index;
 		gap_buf.right_index = gap_buf.right_index - (gap_buf.left_index - index);
 	}
 	else if(index > gap_buf.left_index)
 	{
-		strncpy(gap_buf.left +  gap_buf.left_index, gap_buf.right + gap_buf.right_index, index - gap_buf.left_index);
-		memset(gap_buf.right, 0, index - gap_buf.left_index);
+		(void)strncpy(gap_buf.left +  gap_buf.left_index, gap_buf.right + gap_buf.right_index, index - gap_buf.left_index);
+		(void)memset(gap_buf.right, 0, index - gap_buf.left_index);
 		gap_buf.left_index = index;
 		gap_buf.right_index = gap_buf.right_index + (index - gap_buf.left_index);
 	}
@@ -154,6 +154,19 @@ void delete_range(unsigned int from, unsigned int to)
 {
 
 }
+
+
+unsigned int get_left_size(void)
+{
+	return gap_buf.left_index;
+}
+
+unsigned int get_right_size(void)
+{
+	return gap_buf.right_index;
+}
+
+
 
 
 // ***********************
