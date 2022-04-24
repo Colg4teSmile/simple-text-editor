@@ -126,25 +126,78 @@ int main(int argc, char* argv[])
 }
 
 gboolean press_key (GtkWidget *widget, GdkEventKey *event, gpointer data) {
-    insert_char('a');
-    update();
-
-
-    return TRUE;
-
     char ch;
     switch (event->keyval)
     {
+        case GDK_KEY_a:
+        case GDK_KEY_b:
+        case GDK_KEY_c:
+        case GDK_KEY_d:
+        case GDK_KEY_e:
+        case GDK_KEY_f:
+        case GDK_KEY_g:
+        case GDK_KEY_h:
+        case GDK_KEY_i:
+        case GDK_KEY_j:
+        case GDK_KEY_k:
+        case GDK_KEY_l:
+        case GDK_KEY_m:
+        case GDK_KEY_n:
+        case GDK_KEY_o:
+        case GDK_KEY_p:
+        case GDK_KEY_q:
+        case GDK_KEY_r:
+        case GDK_KEY_s:
         case GDK_KEY_t:
-            insert_char('t');
-            gtk_label_set_label ( GTK_LABEL ( widget ), get_left_message() );
-            gtk_main_iteration();
+        case GDK_KEY_u:
+        case GDK_KEY_v:
+        case GDK_KEY_w:
+        case GDK_KEY_x:
+        case GDK_KEY_y:
+        case GDK_KEY_z:
+        case GDK_KEY_A:
+        case GDK_KEY_B:
+        case GDK_KEY_C:
+        case GDK_KEY_D:
+        case GDK_KEY_E:
+        case GDK_KEY_F:
+        case GDK_KEY_G:
+        case GDK_KEY_H:
+        case GDK_KEY_I:
+        case GDK_KEY_J:
+        case GDK_KEY_K:
+        case GDK_KEY_L:
+        case GDK_KEY_M:
+        case GDK_KEY_N:
+        case GDK_KEY_O:
+        case GDK_KEY_P:
+        case GDK_KEY_Q:
+        case GDK_KEY_R:
+        case GDK_KEY_S:
+        case GDK_KEY_T:
+        case GDK_KEY_U:
+        case GDK_KEY_V:
+        case GDK_KEY_W:
+        case GDK_KEY_X:
+        case GDK_KEY_Y:
+        case GDK_KEY_Z:
+        case GDK_KEY_0:
+        case GDK_KEY_1:
+        case GDK_KEY_2:
+        case GDK_KEY_4:
+        case GDK_KEY_4:
+        case GDK_KEY_5:
+        case GDK_KEY_6:
+        case GDK_KEY_7:
+        case GDK_KEY_8:
+        case GDK_KEY_9:
+        case GDK_KEY_space:
+            insert_char(event->keyval);
+            update();
             return TRUE;
             
         default:
-            return TRUE;
+            return FALSE;
     }
-
-
     return TRUE;
 }
