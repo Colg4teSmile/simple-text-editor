@@ -76,6 +76,7 @@ void resize(void)
 		memset(buf_right_tmp, 0, new_half_buf_length);
 		if(gap_buf.length > (gap_buf.right_index + 1))
 		{
+			// need to check if this is correct
 			memcpy(buf_right_tmp + gap_buf.right_index - new_half_buf_length, gap_buf.right + gap_buf.right_index, gap_buf.length - (gap_buf.right_index + 1));
 		}
 		free_gap_buffer();
@@ -86,7 +87,7 @@ void resize(void)
 
 		gap_buf.length >>= 1;
 	}
-	print_stats();
+	//print_stats();
 }
 
 

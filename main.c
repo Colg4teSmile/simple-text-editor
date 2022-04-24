@@ -192,11 +192,13 @@ gboolean press_key (GtkWidget *widget, GdkEventKey *event, gpointer data) {
         case GDK_KEY_9:
         case GDK_KEY_space:
             insert_char(event->keyval);
-            update();
-            return TRUE;
-            
+            break;
+        case GDK_KEY_BackSpace:
+            delete_char();
+            break;
         default:
             return FALSE;
     }
+    update();
     return TRUE;
 }
