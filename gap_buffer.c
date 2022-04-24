@@ -46,12 +46,14 @@ void resize(void)
 		//double the size of the buffer and copy the data
 		char* buf_left_tmp = (char*)malloc(gap_buf.length);
 		memset(buf_left_tmp, 0, gap_buf.length);
-		strncpy(buf_left_tmp, gap_buf.left, gap_buf.left_index);
+		memcpy(buf_left_tmp, gap_buf.left, gap_buf.left_index);
 
 		char* buf_right_tmp = (char*)malloc(gap_buf.length);
 		memset(buf_right_tmp, 0, gap_buf.length);
-		strncpy(buf_right_tmp + (gap_buf.length >> 1) + gap_buf.right_index, gap_buf.right + gap_buf.right_index, gap_buf.length - gap_buf.right_index - 1);
-
+		if (gap_buf.length>>1 > gap_buf.right_index + 1)
+		{
+			memcpy(buf_right_tmp + (gap_buf.length >> 1) + gap_buf.right_index + 1, gap_buf.right + gap_buf.right_index + 1, gap_buf.length - (gap_buf.right_index + 1));
+		}
 		free_gap_buffer();
 
 		gap_buf.left = buf_left_tmp;
@@ -60,6 +62,7 @@ void resize(void)
 
 		gap_buf.length <<= 1;
 	}
+	
 	else if((4 * length_tmp) < gap_buf.length && gap_buf.length > MIN_SIZE_GAP_BUFFER)
 	{
 		//TODO: half the size
@@ -81,6 +84,8 @@ void resize(void)
 
 		gap_buf.length >>= 1;
 	}
+	
+	print_stats();
 }
 
 
@@ -177,7 +182,7 @@ void print_stats(void /*gap_buffer_t* gap_buf_ptr*/)
 	printf("***** STATS *****\n");
 	printf("Message:\n");
 	printf("%s", gap_buf_ptr->left);
-	printf("%s\n", gap_buf_ptr->right + gap_buf_ptr->right_index);
+	//printf("%s\n", gap_buf_ptr->right + gap_buf_ptr->right_index);
 	printf("Left index: %d\n", gap_buf_ptr->left_index);
 	printf("Length of left message: %d\n", gap_buf_ptr->left_index);
 	printf("Right Index: %d\n", gap_buf_ptr->right_index);
