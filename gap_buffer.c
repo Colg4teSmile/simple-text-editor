@@ -50,7 +50,7 @@ void resize(void)
 
 		char* buf_right_tmp = (char*)malloc(gap_buf.length);
 		memset(buf_right_tmp, 0, gap_buf.length);
-		if (gap_buf.length>>1 > gap_buf.right_index + 1)
+		if ((gap_buf.length >> 1) > gap_buf.right_index + 1)
 		{
 			memcpy(buf_right_tmp + (gap_buf.length >> 1) + gap_buf.right_index + 1, gap_buf.right + gap_buf.right_index + 1, gap_buf.length - (gap_buf.right_index + 1));
 		}
@@ -70,12 +70,14 @@ void resize(void)
 
 		char* buf_left_tmp = (char*)malloc(new_half_buf_length);
 		memset(buf_left_tmp, 0, new_half_buf_length);
-		strncpy(buf_left_tmp, gap_buf.left, gap_buf.left_index);
+		memcpy(buf_left_tmp, gap_buf.left, gap_buf.left_index);
 
 		char* buf_right_tmp = (char*)malloc(new_half_buf_length);
 		memset(buf_right_tmp, 0, new_half_buf_length);
-		strncpy(buf_right_tmp + gap_buf.right_index - new_half_buf_length, gap_buf.right + gap_buf.right_index, gap_buf.length - gap_buf.right_index - 1);
-
+		if(gap_buf.length > (gap_buf.right_index + 1))
+		{
+			memcpy(buf_right_tmp + gap_buf.right_index - new_half_buf_length, gap_buf.right + gap_buf.right_index, gap_buf.length - (gap_buf.right_index + 1));
+		}
 		free_gap_buffer();
 
 		gap_buf.left = buf_left_tmp;
