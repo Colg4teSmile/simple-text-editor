@@ -1,10 +1,9 @@
 #include <stdio.h>
-
 #include <gtk/gtk.h>
 
 #include "gap_buffer.h"
 
-GtkTextBuffer * buffer_text_area;
+GtkTextBuffer* buffer_text_area;
 GtkTextIter* iter;
 
 extern gap_buffer_t* gap_buf_ptr;
@@ -184,7 +183,7 @@ gboolean press_key (GtkWidget *widget, GdkEventKey *event, gpointer data) {
         case GDK_KEY_0:
         case GDK_KEY_1:
         case GDK_KEY_2:
-        case GDK_KEY_4:
+        case GDK_KEY_3:
         case GDK_KEY_4:
         case GDK_KEY_5:
         case GDK_KEY_6:

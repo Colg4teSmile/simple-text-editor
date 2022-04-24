@@ -4,7 +4,6 @@
 #define MIN_SIZE_GAP_BUFFER 32
 #define MIN_SIZE_GAP_BUFFER_HALF 16
 
-// structure not needed, because used one time, but still nice to have
 typedef struct gap_buffer {
 	char* left;
 	char* right;

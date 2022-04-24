@@ -40,7 +40,7 @@ void reset_gap_buffer(void)
 // double the size if too small, half it if too big
 void resize(void)
 {
-	unsigned int length_tmp = gap_buf.left_index + (gap_buf.length >> 1) - gap_buf.right_index - 1;
+	unsigned int length_tmp = gap_buf.left_index + (gap_buf.length >> 1) - (gap_buf.right_index + 1);
 	if((2 * length_tmp) >= gap_buf.length)
 	{
 		//double the size of the buffer and copy the data
@@ -54,8 +54,8 @@ void resize(void)
 		{
 			memcpy(buf_right_tmp + (gap_buf.length >> 1) + gap_buf.right_index + 1, gap_buf.right + gap_buf.right_index + 1, gap_buf.length - (gap_buf.right_index + 1));
 		}
-		free_gap_buffer();
 
+		free_gap_buffer();
 		gap_buf.left = buf_left_tmp;
 		gap_buf.right = buf_right_tmp;
 		gap_buf.right_index += (gap_buf.length >> 1);		
@@ -84,7 +84,6 @@ void resize(void)
 
 		gap_buf.length >>= 1;
 	}
-	
 	print_stats();
 }
 
