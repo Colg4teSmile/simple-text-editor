@@ -76,7 +76,7 @@ void resize(void)
 		memset(buf_right_tmp, 0, new_half_buf_length);
 		if(gap_buf.length > (gap_buf.right_index + 1))
 		{
-			// need to check if this is correct
+			// TODO: need to check if this is correct
 			memcpy(buf_right_tmp + gap_buf.right_index - new_half_buf_length, gap_buf.right + gap_buf.right_index, gap_buf.length - (gap_buf.right_index + 1));
 		}
 		free_gap_buffer();
@@ -87,7 +87,6 @@ void resize(void)
 
 		gap_buf.length >>= 1;
 	}
-	//print_stats();
 }
 
 
@@ -162,7 +161,6 @@ void delete_range(unsigned int from, unsigned int to)
 
 }
 
-
 unsigned int get_left_size(void)
 {
 	return gap_buf.left_index;
@@ -171,25 +169,4 @@ unsigned int get_left_size(void)
 unsigned int get_right_size(void)
 {
 	return gap_buf.right_index;
-}
-
-
-
-
-// ***********************
-// TODO: to put in tools.c
-// ***********************
-void print_stats(void /*gap_buffer_t* gap_buf_ptr*/)
-{
-	printf("***** STATS *****\n");
-	printf("Message:\n");
-	printf("%s", gap_buf_ptr->left);
-	//printf("%s\n", gap_buf_ptr->right + gap_buf_ptr->right_index);
-	printf("Left index: %d\n", gap_buf_ptr->left_index);
-	printf("Length of left message: %d\n", gap_buf_ptr->left_index);
-	printf("Right Index: %d\n", gap_buf_ptr->right_index);
-	printf("Length of right message: %d\n", (gap_buf_ptr->length >> 1) - gap_buf_ptr->right_index - 1);
-	printf("Total length of buffer: %d\n", gap_buf_ptr->length);
-	printf("Total length of the message: %d\n", gap_buf_ptr->left_index + (gap_buf_ptr->length >> 1) - gap_buf_ptr->right_index - 1);
-	printf("*****************\n\n");
 }

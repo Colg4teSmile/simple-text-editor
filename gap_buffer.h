@@ -1,5 +1,5 @@
-#ifndef _GAP_BUFFER_MV_
-#define _GAP_BUFFER_MV_
+#ifndef _GAP_BUFFER_MV_H_
+#define _GAP_BUFFER_MV_H_
 
 #define MIN_SIZE_GAP_BUFFER 32
 #define MIN_SIZE_GAP_BUFFER_HALF 16
@@ -29,6 +29,6 @@ unsigned int get_right_size(void);
 void delete_char(void);
 void delete_range(unsigned int from, unsigned int to);  //TODO
 
-void print_stats(void /*gap_buffer_t* gap_buf_ptr*/);
+void print_stats(void /* TODO: gap_buffer_t* gap_buf_ptr */);
 
 #endif
