@@ -19,7 +19,7 @@ void reset_gap_buffer(void);
 void resize(void);
 void insert_char(char ch);
 void insert_string(const char* ch);  //TODO
-void cursor_at(unsigned int);
+void set_cursor_at(unsigned int);
 const char* get_left_message(void);
 const char* get_right_message(void);
 

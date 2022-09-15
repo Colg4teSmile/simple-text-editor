@@ -5,12 +5,14 @@
 
 static GtkTextBuffer* buffer_text_area;
 static GtkTextIter iter;
-static GdkRectangle rec;
 static GtkWidget* window; 
 static GtkWidget* view;
 static GtkTextBuffer *buffer;
-static GtkWidstatic get* menubar;
+static GtkWidget* menubar;
 static GtkWidget* box;
+static GtkTextMark* mark;
+
+static gint position;
 
 static void quit(GtkWidget *window, gpointer data)
 { 
@@ -24,28 +26,14 @@ static void update(void)
     gtk_text_buffer_insert(buffer_text_area, &iter, get_right_message(), get_right_size());
 }
 
-/*
-gtk_text_view_get_cursor_locations (
-  GtkTextView* text_view,
-  const GtkTextIter* iter,
-  GdkRectangle* strong,
-  GdkRectangle* weak
-)
-*/
-
-
 static gboolean press_key (GtkWidget *widget, GdkEventKey *event, gpointer data)
 {
-    //gtk_text_buffer_get_iter_at_offset(buffer_text_area,&iter,0);
-    //gtk_text_view_get_cursor_locations(view,NULL,NULL,&rec);
-    //printf("INFO - x: %d, y: %d, width: %d, height: %d\n",rec.x,rec.y,rec.width,rec.height); 
+    mark = gtk_text_buffer_get_insert(buffer_text_area);
+    gtk_text_buffer_get_iter_at_mark(buffer_text_area, &iter, mark);
+    position = gtk_text_iter_get_offset(&iter);
 
-    //cursor-position
-    
-    gtk_text_buffer_get_iter_at_mark(buffer_text_area, &iter, gtk_text_buffer_get_insert(buffer_text_area));
+    set_cursor_at(position);
 
-    //printf("INFO - x: %d\n",buffer_text_area->cursor_position);
-    
     switch (event->keyval)
     {
         case GDK_KEY_a:

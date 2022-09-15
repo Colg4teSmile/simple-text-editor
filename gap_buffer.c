@@ -102,11 +102,11 @@ void insert_string(const char* ch)
 
 }
 
-void cursor_at(unsigned int index)
+void set_cursor_at(unsigned int index)
 {
 	if(index >= gap_buf.length)
 	{
-		printf("Error: function cursor_at tried to access out of range value\n");
+		printf("Error: function set_cursor_at tried to access out of range value\n");
 		return;
 	}
 	if(index < gap_buf.left_index)
