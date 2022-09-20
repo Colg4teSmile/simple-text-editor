@@ -43,7 +43,7 @@ void resize(void)
 {
 	// compute length of text written in buffer
 	unsigned int length_tmp = gap_buf.left_index + HALF(gap_buf.length) - (gap_buf.right_index + 1);
-	if((2 * length_tmp) >= gap_buf.length)
+	if(DOUBLE(length_tmp) >= gap_buf.length)
 	{
 		//double the size of the buffer and copy the data
 		char* buf_left_tmp = (char*)malloc(gap_buf.length);
@@ -64,7 +64,7 @@ void resize(void)
 		gap_buf.length = DOUBLE(gap_buf.length);
 	}
 	
-	else if((4 * length_tmp) < gap_buf.length && gap_buf.length > MIN_SIZE_GAP_BUFFER)
+	else if(QUADRUPLE(length_tmp) < gap_buf.length && gap_buf.length > MIN_SIZE_GAP_BUFFER)
 	{
 		//TODO: half the size
 		unsigned int new_half_buf_length = QUARTER(gap_buf.length);
