@@ -1,8 +1,9 @@
-#include "gap_buffer.h"
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+
+#include "gap_buffer.h"
+#include "macro.h"
 
 static gap_buffer_t gap_buf;
 gap_buffer_t* gap_buf_ptr = &gap_buf;
@@ -40,7 +41,8 @@ void reset_gap_buffer(void)
 // double the size if too small, half it if too big
 void resize(void)
 {
-	unsigned int length_tmp = gap_buf.left_index + (gap_buf.length >> 1) - (gap_buf.right_index + 1);
+	// compute length of text written in buffer
+	unsigned int length_tmp = gap_buf.left_index + HALF(gap_buf.length) - (gap_buf.right_index + 1);
 	if((2 * length_tmp) >= gap_buf.length)
 	{
 		//double the size of the buffer and copy the data
@@ -50,23 +52,22 @@ void resize(void)
 
 		char* buf_right_tmp = (char*)malloc(gap_buf.length);
 		memset(buf_right_tmp, 0, gap_buf.length);
-		if ((gap_buf.length >> 1) > gap_buf.right_index + 1)
+		if (HALF(gap_buf.length) > gap_buf.right_index + 1)
 		{
-			memcpy(buf_right_tmp + (gap_buf.length >> 1) + gap_buf.right_index + 1, gap_buf.right + gap_buf.right_index + 1, gap_buf.length - (gap_buf.right_index + 1));
+			memcpy(buf_right_tmp + HALF(gap_buf.length) + gap_buf.right_index + 1, gap_buf.right + gap_buf.right_index + 1, gap_buf.length - (gap_buf.right_index + 1));
 		}
 
 		free_gap_buffer();
 		gap_buf.left = buf_left_tmp;
 		gap_buf.right = buf_right_tmp;
-		gap_buf.right_index += (gap_buf.length >> 1);		
-
-		gap_buf.length <<= 1;
+		gap_buf.right_index = gap_buf.right_index + HALF(gap_buf.length);
+		gap_buf.length = DOUBLE(gap_buf.length);
 	}
 	
 	else if((4 * length_tmp) < gap_buf.length && gap_buf.length > MIN_SIZE_GAP_BUFFER)
 	{
 		//TODO: half the size
-		unsigned int new_half_buf_length = gap_buf.length >> 2;
+		unsigned int new_half_buf_length = QUARTER(gap_buf.length);
 
 		char* buf_left_tmp = (char*)malloc(new_half_buf_length);
 		memset(buf_left_tmp, 0, new_half_buf_length);
@@ -83,12 +84,10 @@ void resize(void)
 
 		gap_buf.left = buf_left_tmp;
 		gap_buf.right = buf_right_tmp;
-		gap_buf.right_index -= new_half_buf_length;	
-
-		gap_buf.length >>= 1;
+		gap_buf.right_index = gap_buf.right_index - new_half_buf_length;	
+		gap_buf.length = HALF(gap_buf.length);
 	}
 }
-
 
 void insert_char(char ch)
 {
@@ -106,7 +105,7 @@ void set_cursor_at(unsigned int index)
 {
 	if(index >= gap_buf.length)
 	{
-		printf("Error: function set_cursor_at tried to access out of range value\n");
+		printf("Error: function set_cursor_at() tried to access out of range value\n");
 		return;
 	}
 	if(index < gap_buf.left_index)
