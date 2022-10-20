@@ -19,6 +19,22 @@ void print_stats(void  /* TODO: gap_buffer_t* gap_buf_ptr */)
 	printf("*****************\n\n");
 }
 
+// dumps the contend of a buffer of given length
+void dump(char buf[], int length)
+{
+	for(int i = 0; i < length; i++)
+	{
+		printf("%02x ",buf[i]);
+		if(i + 1 % 8 == 0)
+		{
+			printf("\n");
+		}
+	}
+	printf("\n");
+}
+
+
+
 // TODO
 char* get_text(gap_buffer_t* gap_buf_ptr)
 {
