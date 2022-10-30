@@ -12,6 +12,10 @@ typedef struct gap_buffer {
 	unsigned int length;
 } gap_buffer_t;
 
+extern unsigned int cursor_pos;
+
+// TODO: all the functions should take a pointer to a gap buffer as a parameter
+// TODO: init function should return a pointer to a gap buffer structure
 void init_gap_buffer(void);
 void free_gap_buffer(void);
 void reset_gap_buffer(void);
@@ -29,6 +33,8 @@ unsigned int get_right_size(void);
 void delete_char(void);
 void delete_range(unsigned int from, unsigned int to);  //TODO
 
-void print_stats(void /* TODO: gap_buffer_t* gap_buf_ptr */);
+void print_stats(gap_buffer_t* ptr);
+void dump(char buf[], int length);
+void dump_gap_buffer(gap_buffer_t* ptr);
 
 #endif

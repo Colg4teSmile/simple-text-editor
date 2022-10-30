@@ -8,6 +8,8 @@
 static gap_buffer_t gap_buf;
 gap_buffer_t* gap_buf_ptr = &gap_buf;
 
+unsigned int cursor_pos = 0;
+
 void init_gap_buffer(void)
 {
 	gap_buf.left = (char*) malloc(MIN_SIZE_GAP_BUFFER_HALF);
@@ -92,6 +94,7 @@ void resize(void)
 void insert_char(char ch)
 {
 	*(gap_buf.left + gap_buf.left_index++) = ch;
+	INCREMENT_CURSOR();
 	resize();
 }
 
@@ -105,19 +108,21 @@ void set_cursor_at(unsigned int index)
 {
 	if(index >= gap_buf.length)
 	{
-		printf("Error: function set_cursor_at() tried to access out of range value\n");
+		printf("Error: function %s tried to access out of range value\n", __func__);
 		return;
 	}
 	if(index < gap_buf.left_index)
 	{
-		(void)strncpy(gap_buf.right + gap_buf.right_index - (gap_buf.left_index - index), gap_buf.left + index, gap_buf.left_index - index);
+		printf("ciao");
+		(void)memcpy(gap_buf.right + gap_buf.right_index - (gap_buf.left_index - index), gap_buf.left + index, gap_buf.left_index - index);
 		(void)memset(gap_buf.left + index, 0, gap_buf.left_index - index);
 		gap_buf.left_index = index;
 		gap_buf.right_index = gap_buf.right_index - (gap_buf.left_index - index);
 	}
 	else if(index > gap_buf.left_index)
 	{
-		(void)strncpy(gap_buf.left +  gap_buf.left_index, gap_buf.right + gap_buf.right_index, index - gap_buf.left_index);
+		printf("ciao");
+		(void)memcpy(gap_buf.left +  gap_buf.left_index, gap_buf.right + gap_buf.right_index, index - gap_buf.left_index);
 		(void)memset(gap_buf.right, 0, index - gap_buf.left_index);
 		gap_buf.left_index = index;
 		gap_buf.right_index = gap_buf.right_index + (index - gap_buf.left_index);
@@ -151,6 +156,7 @@ void delete_char(void)
 	if (gap_buf.left_index > 0)
 	{
 		*(gap_buf.left + gap_buf.left_index--) = '\0';
+		DECREMENT_CURSOR();
 	}
 }
 

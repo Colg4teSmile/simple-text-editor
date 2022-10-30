@@ -3,16 +3,23 @@
 #include "gap_buffer.h"
 #include "gui.h"
 
+#include "macro.h"
+
+extern gap_buffer_t* gap_buf_ptr;
+
 static GtkTextBuffer* buffer_text_area;
-static GtkTextIter iter;
 static GtkWidget* window; 
 static GtkWidget* view;
-static GtkTextBuffer *buffer;
+// static GtkTextBuffer *buffer;
 static GtkWidget* menubar;
 static GtkWidget* box;
 static GtkTextMark* mark;
+static GtkTextIter iter;
+static GtkTextIter cursor;
 
 static gint position;
+
+static unsigned int pos_tmp = 0;
 
 static void quit(GtkWidget *window, gpointer data)
 { 
@@ -22,18 +29,15 @@ static void quit(GtkWidget *window, gpointer data)
 static void update(void)
 {
     gtk_text_buffer_set_text(GTK_TEXT_BUFFER(buffer_text_area),get_left_message(),get_left_size());
-    gtk_text_buffer_get_iter_at_offset(buffer_text_area, &iter, 0);
+    gtk_text_buffer_get_iter_at_offset(buffer_text_area, &iter, -1);
     gtk_text_buffer_insert(buffer_text_area, &iter, get_right_message(), get_right_size());
+
+    gtk_text_iter_set_offset(&iter, GET_CURSOR());
+    gtk_text_buffer_place_cursor(buffer_text_area,&iter);
 }
 
 static gboolean press_key (GtkWidget *widget, GdkEventKey *event, gpointer data)
 {
-    mark = gtk_text_buffer_get_insert(buffer_text_area);
-    gtk_text_buffer_get_iter_at_mark(buffer_text_area, &iter, mark);
-    position = gtk_text_iter_get_offset(&iter);
-
-    set_cursor_at(position);
-
     switch (event->keyval)
     {
         case GDK_KEY_a:
@@ -100,14 +104,31 @@ static gboolean press_key (GtkWidget *widget, GdkEventKey *event, gpointer data)
         case GDK_KEY_9:
         case GDK_KEY_space:
             insert_char(event->keyval);
+            // gtk_text_iter_forward_cursor_position(&cursor);
             break;
         case GDK_KEY_BackSpace:
             delete_char();
             break;
+        case GDK_KEY_Left:
+             DECREMENT_CURSOR();
+            // gtk_text_iter_backward_cursor_position(&cursor);
+            break;
+        case GDK_KEY_Right:
+            // gtk_text_iter_forward_cursor_position(&cursor);
+            break;
         default:
-            return FALSE;
+            break;
     }
+
     update();
+
+    // dump_gap_buffer(gap_buf_ptr);
+
+    set_cursor_at(GET_CURSOR());
+
+    // dump_gap_buffer(gap_buf_ptr);
+    
+
     return TRUE;
 }
 
@@ -118,7 +139,6 @@ void text_editor_gui_main(void)
 	gtk_window_set_title(GTK_WINDOW(window), "simple text editor");
     gtk_window_set_default_size(GTK_WINDOW(window), 1000, 600);
  	g_signal_connect(G_OBJECT(window), "destroy", G_CALLBACK(quit), NULL);
-
     // main box
     box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5); // non so cosa vogliano dire questi parametri
 
@@ -133,6 +153,8 @@ void text_editor_gui_main(void)
     gtk_widget_add_events(view, GDK_KEY_PRESS_MASK);
     g_signal_connect (G_OBJECT (view), "key_press_event", G_CALLBACK (press_key), NULL);
     buffer_text_area = gtk_text_view_get_buffer(GTK_TEXT_VIEW(view));
+
+    gtk_text_buffer_get_iter_at_offset(buffer_text_area, &cursor, 0);
 
     gtk_container_add(GTK_CONTAINER(window), box);
     gtk_widget_show_all(window);

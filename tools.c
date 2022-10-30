@@ -8,8 +8,8 @@ void print_stats(gap_buffer_t* ptr)
 {
 	printf("***** STATS *****\n");
 	printf("Message:\n");
-	printf("%s", ptr->left);
-	//printf("%s\n", ptr->right + ptr->right_index);
+	printf("left message: %s", ptr->left);
+	printf("right message: %s\n", ptr->right + ptr->right_index);
 	printf("Left index: %d\n", ptr->left_index);
 	printf("Length of left message: %d\n", ptr->left_index);
 	printf("Right Index: %d\n", ptr->right_index);
@@ -39,8 +39,6 @@ void dump_gap_buffer(gap_buffer_t* ptr)
     dump(ptr->left, ptr->length >> 1);
     dump(ptr->right, ptr->length >> 1);
 }
-
-
 
 // TODO
 char* get_text(gap_buffer_t* gap_buf_ptr)

@@ -6,4 +6,9 @@
 #define HALF(x) (x >> 1)
 #define QUARTER(x) (x >> 2)
 
+#define INCREMENT_CURSOR() cursor_pos++
+#define DECREMENT_CURSOR() cursor_pos--
+#define GET_CURSOR() cursor_pos
+#define SET_CURSOR(x) cursor_pos = x
+
 #endif
