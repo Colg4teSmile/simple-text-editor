@@ -28,11 +28,11 @@ static void update(void)
 {
     // simply shows what's in the buffer
     gtk_text_buffer_set_text(GTK_TEXT_BUFFER(buffer_text_area),get_left_message(),get_left_size());
-    gtk_text_buffer_get_iter_at_offset(buffer_text_area, &iter, -1);
-    gtk_text_buffer_insert(buffer_text_area, &iter, get_right_message(), get_right_size());
-    gtk_text_buffer_get_iter_at_offset(buffer_text_area, &iter, -1);
-    gtk_text_buffer_insert(buffer_text_area, &iter, '\0', 1);
-
+    if (RIGHT_LENGTH(gap_buf_ptr) > 0)
+    {
+        gtk_text_buffer_get_iter_at_offset(buffer_text_area, &iter, -1);
+        gtk_text_buffer_insert(buffer_text_area, &iter, get_right_message(), get_right_size());
+    }
     /*
     gtk_text_iter_set_offset(&iter, GET_CURSOR());
     gtk_text_buffer_place_cursor(buffer_text_area,&iter);
@@ -109,7 +109,7 @@ static gboolean press_key (GtkWidget *widget, GdkEventKey *event, gpointer data)
             // printf("inserting char %c\n",event->keyval);
             insert_char(event->keyval);
             // printf("inserted char %c\n",event->keyval);
-            
+
             // gtk_text_iter_forward_cursor_position(&cursor);
             break;
         case GDK_KEY_BackSpace:
