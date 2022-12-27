@@ -19,8 +19,6 @@ static GtkTextIter cursor;
 
 static gint position;
 
-static unsigned int pos_tmp = 0;
-
 static void quit(GtkWidget *window, gpointer data)
 { 
 	gtk_main_quit(); 
@@ -28,12 +26,17 @@ static void quit(GtkWidget *window, gpointer data)
 
 static void update(void)
 {
+    // simply shows what's in the buffer
     gtk_text_buffer_set_text(GTK_TEXT_BUFFER(buffer_text_area),get_left_message(),get_left_size());
     gtk_text_buffer_get_iter_at_offset(buffer_text_area, &iter, -1);
     gtk_text_buffer_insert(buffer_text_area, &iter, get_right_message(), get_right_size());
+    gtk_text_buffer_get_iter_at_offset(buffer_text_area, &iter, -1);
+    gtk_text_buffer_insert(buffer_text_area, &iter, '\0', 1);
 
+    /*
     gtk_text_iter_set_offset(&iter, GET_CURSOR());
     gtk_text_buffer_place_cursor(buffer_text_area,&iter);
+    */
 }
 
 static gboolean press_key (GtkWidget *widget, GdkEventKey *event, gpointer data)
@@ -103,14 +106,19 @@ static gboolean press_key (GtkWidget *widget, GdkEventKey *event, gpointer data)
         case GDK_KEY_8:
         case GDK_KEY_9:
         case GDK_KEY_space:
+            // printf("inserting char %c\n",event->keyval);
             insert_char(event->keyval);
+            // printf("inserted char %c\n",event->keyval);
+            
             // gtk_text_iter_forward_cursor_position(&cursor);
             break;
         case GDK_KEY_BackSpace:
+            // printf("deleting char!\n");
             delete_char();
+            // printf("deleted char!\n");
             break;
         case GDK_KEY_Left:
-             DECREMENT_CURSOR();
+             // DECREMENT_CURSOR();
             // gtk_text_iter_backward_cursor_position(&cursor);
             break;
         case GDK_KEY_Right:
@@ -120,11 +128,17 @@ static gboolean press_key (GtkWidget *widget, GdkEventKey *event, gpointer data)
             break;
     }
 
+    // printf("print stats 1\n");
+    // print_stats(gap_buf_ptr);
     update();
+    // printf("print stats 2\n");
+    // print_stats(gap_buf_ptr);
+
+    // print_stats(gap_buf_ptr);
 
     // dump_gap_buffer(gap_buf_ptr);
 
-    set_cursor_at(GET_CURSOR());
+    // set_cursor_at(GET_CURSOR());
 
     // dump_gap_buffer(gap_buf_ptr);
     
@@ -139,18 +153,21 @@ void text_editor_gui_main(void)
 	gtk_window_set_title(GTK_WINDOW(window), "simple text editor");
     gtk_window_set_default_size(GTK_WINDOW(window), 1000, 600);
  	g_signal_connect(G_OBJECT(window), "destroy", G_CALLBACK(quit), NULL);
+
     // main box
     box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5); // non so cosa vogliano dire questi parametri
 
+    /*
     // menubar with buttons
     menubar = gtk_menu_bar_new();
     gtk_box_pack_start(GTK_BOX(box), menubar, FALSE, FALSE, 0);
+    */
 
     // the actual interface of the editor
     view = gtk_text_view_new();
     gtk_box_pack_end(GTK_BOX(box), view, TRUE, TRUE, 0);
-    gtk_text_view_set_editable(GTK_TEXT_VIEW(view), FALSE);
-    gtk_widget_add_events(view, GDK_KEY_PRESS_MASK);
+    // gtk_text_view_set_editable(GTK_TEXT_VIEW(view), FALSE);
+    // gtk_widget_add_events(view, GDK_KEY_PRESS_MASK);
     g_signal_connect (G_OBJECT (view), "key_press_event", G_CALLBACK (press_key), NULL);
     buffer_text_area = gtk_text_view_get_buffer(GTK_TEXT_VIEW(view));
 

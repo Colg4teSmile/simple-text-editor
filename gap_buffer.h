@@ -2,7 +2,7 @@
 #define _GAP_BUFFER_MV_H_
 
 #define MIN_SIZE_GAP_BUFFER 32
-#define MIN_SIZE_GAP_BUFFER_HALF 16
+#define MIN_SIZE_GAP_BUFFER_HALF 16 // MIN_SIZE_GAP_BUFFER / 2
 
 typedef struct gap_buffer {
 	char* left;
@@ -12,7 +12,7 @@ typedef struct gap_buffer {
 	unsigned int length;
 } gap_buffer_t;
 
-extern unsigned int cursor_pos;
+// extern unsigned int cursor_pos;
 
 // TODO: all the functions should take a pointer to a gap buffer as a parameter
 // TODO: init function should return a pointer to a gap buffer structure
