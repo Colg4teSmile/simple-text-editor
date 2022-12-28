@@ -1,9 +1,8 @@
 #include <gtk/gtk.h>
 
+#include "macro.h"
 #include "gap_buffer.h"
 #include "gui.h"
-
-#include "macro.h"
 
 extern gap_buffer_t* gap_buf_ptr;
 
@@ -11,36 +10,37 @@ static GtkTextBuffer* buffer_text_area;
 static GtkWidget* window; 
 static GtkWidget* view;
 // static GtkTextBuffer *buffer;
-static GtkWidget* menubar;
+// static GtkWidget* menubar;
 static GtkWidget* box;
-static GtkTextMark* mark;
+// static GtkTextMark* mark;
 static GtkTextIter iter;
 static GtkTextIter cursor;
-
-static gint position;
 
 static void quit(GtkWidget *window, gpointer data)
 { 
 	gtk_main_quit(); 
 }
 
-static void update(void)
+static int update_screen(void* data)
 {
     // simply shows what's in the buffer
-    gtk_text_buffer_set_text(GTK_TEXT_BUFFER(buffer_text_area),get_left_message(),get_left_size());
+    gtk_text_buffer_set_text(GTK_TEXT_BUFFER(buffer_text_area),get_left_message(),LEFT_LENGTH(gap_buf_ptr));
     if (RIGHT_LENGTH(gap_buf_ptr) > 0)
     {
         gtk_text_buffer_get_iter_at_offset(buffer_text_area, &iter, -1);
-        gtk_text_buffer_insert(buffer_text_area, &iter, get_right_message(), get_right_size());
+        gtk_text_buffer_insert(buffer_text_area, &iter, get_right_message(), RIGHT_LENGTH(gap_buf_ptr));
     }
-    /*
-    gtk_text_iter_set_offset(&iter, GET_CURSOR());
-    gtk_text_buffer_place_cursor(buffer_text_area,&iter);
-    */
+    // gives a warning if not given
+    gtk_text_buffer_get_start_iter(buffer_text_area, &cursor);
+    gtk_text_iter_set_offset(&cursor, GET_CURSOR(gap_buf_ptr));
+    gtk_text_buffer_place_cursor(buffer_text_area, &cursor);
+    return TRUE;
 }
 
 static gboolean press_key (GtkWidget *widget, GdkEventKey *event, gpointer data)
 {
+    printf("BEFORE:\n");
+    print_stats(gap_buf_ptr);
     switch (event->keyval)
     {
         case GDK_KEY_a:
@@ -106,42 +106,35 @@ static gboolean press_key (GtkWidget *widget, GdkEventKey *event, gpointer data)
         case GDK_KEY_8:
         case GDK_KEY_9:
         case GDK_KEY_space:
-            // printf("inserting char %c\n",event->keyval);
             insert_char(event->keyval);
-            // printf("inserted char %c\n",event->keyval);
-
             // gtk_text_iter_forward_cursor_position(&cursor);
+            INCREMENT_CURSOR(gap_buf_ptr);
             break;
         case GDK_KEY_BackSpace:
-            // printf("deleting char!\n");
             delete_char();
-            // printf("deleted char!\n");
+            DECREMENT_CURSOR(gap_buf_ptr);
             break;
         case GDK_KEY_Left:
-             // DECREMENT_CURSOR();
+            DECREMENT_CURSOR(gap_buf_ptr);
             // gtk_text_iter_backward_cursor_position(&cursor);
             break;
         case GDK_KEY_Right:
             // gtk_text_iter_forward_cursor_position(&cursor);
+            INCREMENT_CURSOR(gap_buf_ptr);
             break;
         default:
             break;
     }
 
-    // printf("print stats 1\n");
-    // print_stats(gap_buf_ptr);
-    update();
-    // printf("print stats 2\n");
-    // print_stats(gap_buf_ptr);
+    update_gap_buffer(gap_buf_ptr);
+    printf("AFTER:\n");
+    print_stats(gap_buf_ptr);
 
-    // print_stats(gap_buf_ptr);
+    printf("\n\n");
 
+
+    // printf("cursor_pos: %u\n",gap_buf_ptr->cursor_pos);
     // dump_gap_buffer(gap_buf_ptr);
-
-    // set_cursor_at(GET_CURSOR());
-
-    // dump_gap_buffer(gap_buf_ptr);
-    
 
     return TRUE;
 }
@@ -171,7 +164,11 @@ void text_editor_gui_main(void)
     g_signal_connect (G_OBJECT (view), "key_press_event", G_CALLBACK (press_key), NULL);
     buffer_text_area = gtk_text_view_get_buffer(GTK_TEXT_VIEW(view));
 
-    gtk_text_buffer_get_iter_at_offset(buffer_text_area, &cursor, 0);
+    // gtk_text_buffer_get_iter_at_offset(buffer_text_area, &cursor, 0);
+    gtk_text_buffer_get_start_iter(buffer_text_area, &iter);
+    gtk_text_buffer_get_start_iter(buffer_text_area, &cursor);
+
+    gdk_threads_add_idle(update_screen, NULL);
 
     gtk_container_add(GTK_CONTAINER(window), box);
     gtk_widget_show_all(window);

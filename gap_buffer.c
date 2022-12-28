@@ -8,8 +8,6 @@
 static gap_buffer_t gap_buf;
 gap_buffer_t* gap_buf_ptr = &gap_buf;
 
-// unsigned int cursor_pos = 0;
-
 void init_gap_buffer(void)
 {
 	gap_buf.left = (char*) calloc(MIN_SIZE_GAP_BUFFER_HALF, sizeof(char));
@@ -19,6 +17,8 @@ void init_gap_buffer(void)
 	gap_buf.right_index = MIN_SIZE_GAP_BUFFER_HALF - 1;
 
 	gap_buf.length = MIN_SIZE_GAP_BUFFER;
+
+	gap_buf.cursor_pos = 0;
 }
 
 void free_gap_buffer(void)
@@ -54,7 +54,6 @@ void resize(void)
 		// copy a string only if there is something in the buffer
 		if (HALF(gap_buf.length) > gap_buf.right_index + 1)
 		{
-			// TODO: check
 			memcpy(buf_right_tmp + HALF(gap_buf.length) + gap_buf.right_index + 1, 
 				   gap_buf.right + gap_buf.right_index + 1, 
 				   RIGHT_LENGTH(gap_buf_ptr));
@@ -68,7 +67,6 @@ void resize(void)
 	}
 	else if(QUADRUPLE(length_tmp) < gap_buf.length && gap_buf.length > MIN_SIZE_GAP_BUFFER)
 	{
-		//TODO: half the size
 		unsigned int new_half_buf_length = QUARTER(gap_buf.length);
 
 		char* buf_left_tmp = (char*)calloc(new_half_buf_length,sizeof(char));
@@ -78,7 +76,6 @@ void resize(void)
 		// copy a string only if there is something in the buffer
 		if(HALF(gap_buf.length) > gap_buf.right_index + 1)
 		{
-			// TODO: change!
 			memcpy(buf_right_tmp + gap_buf.right_index - new_half_buf_length, 
 				   gap_buf.right + gap_buf.right_index, 
 				   RIGHT_LENGTH(gap_buf_ptr));
@@ -95,7 +92,6 @@ void resize(void)
 void insert_char(char ch)
 {
 	*(gap_buf.left + gap_buf.left_index++) = ch;
-	// INCREMENT_CURSOR();
 	resize();
 }
 
@@ -105,37 +101,67 @@ void insert_string(const char* ch)
 
 }
 
-void set_cursor_at(unsigned int index)
+void update_gap_buffer(gap_buffer_t* ptr)
 {
-	if(index >= gap_buf.length)
+	if(ptr->cursor_pos >= ptr->length)
+	{
+		printf("Error: cursor_pos greater than length in gap_buffer\n");
+		return;
+	}
+	if(ptr->cursor_pos < ptr->left_index)
+	{
+		(void)memcpy(ptr->right + ptr->right_index + 1 - (ptr->left_index - ptr->cursor_pos), 
+					 ptr->left + ptr->cursor_pos, 
+					 ptr->left_index - ptr->cursor_pos);
+		(void)memset(ptr->left + ptr->cursor_pos, 0, ptr->left_index - ptr->cursor_pos);
+		ptr->right_index = ptr->right_index - (ptr->left_index - ptr->cursor_pos);
+		ptr->left_index = ptr->cursor_pos;
+	}
+	else if(ptr->cursor_pos > ptr->left_index)
+	{
+		(void)memcpy(ptr->left + ptr->left_index, 
+					 ptr->right + ptr->right_index + 1, 
+					 ptr->cursor_pos - ptr->left_index);
+		(void)memset(ptr->right, 0, ptr->cursor_pos - ptr->left_index);
+		ptr->right_index = ptr->right_index + (ptr->cursor_pos - ptr->left_index);
+		ptr->left_index = ptr->cursor_pos;
+	}
+}
+/*
+void set_cursor_at(gap_buffer_t* ptr, unsigned int index)
+{
+	if(index >= ptr->length)
 	{
 		printf("Error: function %s tried to access out of range value\n", __func__);
 		return;
 	}
-	if(index < gap_buf.left_index)
+	if(index < ptr->left_index)
 	{
-		printf("ciao");
-		(void)memcpy(gap_buf.right + gap_buf.right_index - (gap_buf.left_index - index), gap_buf.left + index, gap_buf.left_index - index);
-		(void)memset(gap_buf.left + index, 0, gap_buf.left_index - index);
-		gap_buf.left_index = index;
-		gap_buf.right_index = gap_buf.right_index - (gap_buf.left_index - index);
+		(void)memcpy(ptr->right + ptr->right_index - (ptr->left_index - index), 
+					 ptr->left + index, 
+					 ptr->left_index - index);
+		(void)memset(ptr->left + index, 0, ptr->left_index - index);
+		ptr->left_index = index;
+		ptr->right_index = ptr->right_index - (ptr->left_index - index);
 	}
-	else if(index > gap_buf.left_index)
+	else if(index > ptr->left_index)
 	{
-		printf("ciao");
-		(void)memcpy(gap_buf.left +  gap_buf.left_index, gap_buf.right + gap_buf.right_index, index - gap_buf.left_index);
-		(void)memset(gap_buf.right, 0, index - gap_buf.left_index);
-		gap_buf.left_index = index;
-		gap_buf.right_index = gap_buf.right_index + (index - gap_buf.left_index);
+		(void)memcpy(ptr->left +  ptr->left_index, 
+					 ptr->right + ptr->right_index, 
+					 index - ptr->left_index);
+		(void)memset(ptr->right, 0, index - ptr->left_index);
+		ptr->left_index = index;
+		ptr->right_index = ptr->right_index + (index - ptr->left_index);
 	}
 }
+*/
 
 void save_file(const char* filename)
 {
 	FILE* file = fopen(filename,"w");
-	if(file = NULL)
+	if(file == NULL)
 	{
-		printf("Error opening %s!!!\\n",filename);
+		printf("Error opening %s!\\n",filename);
 	}
 	scanf("%s",gap_buf.left);
 	scanf("%s",gap_buf.right + gap_buf.right_index + 1);
@@ -165,14 +191,4 @@ void delete_char(void)
 void delete_range(unsigned int from, unsigned int to)
 {
 
-}
-
-unsigned int get_left_size(void)
-{
-	return gap_buf.left_index;
-}
-
-unsigned int get_right_size(void)
-{
-	return gap_buf.right_index;
 }

@@ -1,21 +1,23 @@
-#include "gap_buffer.h"
-
 #include <stdio.h>
+
+#include "macro.h"
+#include "gap_buffer.h"
 
 extern gap_buffer_t* gap_buf_ptr;
 
 void print_stats(gap_buffer_t* ptr)
 {
 	printf("***** STATS *****\n");
-	printf("Message:\n");
-	printf("left message: %s", ptr->left);
+	// printf("Message:\n");
+	printf("left message: %s\n", ptr->left);
 	printf("right message: %s\n", ptr->right + ptr->right_index);
-	printf("Left index: %d\n", ptr->left_index);
-	printf("Length of left message: %d\n", ptr->left_index);
-	printf("Right Index: %d\n", ptr->right_index);
-	printf("Length of right message: %d\n", (ptr->length >> 1) - ptr->right_index - 1);
-	printf("Total length of buffer: %d\n", ptr->length);
-	printf("Total length of the message: %d\n", ptr->left_index + (ptr->length >> 1) - ptr->right_index - 1);
+	printf("left index: %d\n", ptr->left_index);
+	printf("length of left message: %d\n", LEFT_LENGTH(ptr));
+	printf("right Index: %d\n", ptr->right_index);
+	printf("length of right message: %d\n", RIGHT_LENGTH(ptr));
+	printf("total length of buffer: %d\n", ptr->length);
+	printf("total length of the message: %d\n", LEFT_LENGTH(ptr) + RIGHT_LENGTH(ptr));
+	printf("position of cursor: %u\n", ptr->cursor_pos);
 	printf("*****************\n\n");
 }
 
