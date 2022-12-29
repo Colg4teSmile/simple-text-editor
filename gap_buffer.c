@@ -5,94 +5,95 @@
 #include "gap_buffer.h"
 #include "macro.h"
 
-static gap_buffer_t gap_buf;
-gap_buffer_t* gap_buf_ptr = &gap_buf;
+static void resize(gap_buffer_t* ptr);
 
-void init_gap_buffer(void)
+void init_gap_buffer(gap_buffer_t* ptr)
 {
-	gap_buf.left = (char*) calloc(MIN_SIZE_GAP_BUFFER_HALF, sizeof(char));
-	gap_buf.left_index = 0;
+	// ptr = (gap_buffer_t*)malloc(sizeof(gap_buffer_t));
+	ptr->left = (char*) calloc(MIN_SIZE_GAP_BUFFER_HALF, sizeof(char));
+	ptr->left_index = 0;
 
-	gap_buf.right = (char*) calloc(MIN_SIZE_GAP_BUFFER_HALF, sizeof(char));
-	gap_buf.right_index = MIN_SIZE_GAP_BUFFER_HALF - 1;
+	ptr->right = (char*) calloc(MIN_SIZE_GAP_BUFFER_HALF, sizeof(char));
+	ptr->right_index = MIN_SIZE_GAP_BUFFER_HALF - 1;
 
-	gap_buf.length = MIN_SIZE_GAP_BUFFER;
+	ptr->length = MIN_SIZE_GAP_BUFFER;
 
-	gap_buf.cursor_pos = 0;
+	ptr->cursor_pos = 0;
+	printf("ciao: %u\n",ptr->cursor_pos);
 }
 
-void free_gap_buffer(void)
+void free_gap_buffer(gap_buffer_t* ptr)
 {
-	free(gap_buf.left);
-	gap_buf.left = NULL;
+	free(ptr->left);
+	ptr->left = NULL;
 
-	free(gap_buf.right);
-	gap_buf.right = NULL;
+	free(ptr->right);
+	ptr->right = NULL;
 }
 
-void reset_gap_buffer(void)
+void reset_gap_buffer(gap_buffer_t* ptr)
 {
-	free_gap_buffer();
-	gap_buf.left_index = 0;
-	gap_buf.right_index = 0;
-	gap_buf.length = 0;
+	free_gap_buffer(ptr);
+	ptr->left_index = 0;
+	ptr->right_index = 0;
+	ptr->length = 0;
 }
 
 // double the size if too small, half it if too big
-void resize(void)
+static void resize(gap_buffer_t* ptr)
 {
 	// compute length of text written in buffer
-	unsigned int length_tmp = LEFT_LENGTH(gap_buf_ptr) + RIGHT_LENGTH(gap_buf_ptr);
-	if(DOUBLE(length_tmp) >= gap_buf.length)
+	unsigned int length_tmp = LEFT_LENGTH(ptr) + RIGHT_LENGTH(ptr);
+	if(DOUBLE(length_tmp) >= ptr->length)
 	{
 		//double the size of the buffer and copy the data
-		char* buf_left_tmp = (char*)calloc(gap_buf.length, sizeof(char));
-		memcpy(buf_left_tmp, gap_buf.left, gap_buf.left_index);
+		char* buf_left_tmp = (char*)calloc(ptr->length, sizeof(char));
+		memcpy(buf_left_tmp, ptr->left, ptr->left_index);
 
-		char* buf_right_tmp = (char*)calloc(gap_buf.length, sizeof(char));
+		char* buf_right_tmp = (char*)calloc(ptr->length, sizeof(char));
 
 		// copy a string only if there is something in the buffer
-		if (HALF(gap_buf.length) > gap_buf.right_index + 1)
+		if (HALF(ptr->length) > ptr->right_index + 1)
 		{
-			memcpy(buf_right_tmp + HALF(gap_buf.length) + gap_buf.right_index + 1, 
-				   gap_buf.right + gap_buf.right_index + 1, 
-				   RIGHT_LENGTH(gap_buf_ptr));
+			memcpy(buf_right_tmp + HALF(ptr->length) + ptr->right_index + 1, 
+				   ptr->right + ptr->right_index + 1, 
+				   RIGHT_LENGTH(ptr));
 		}
 
-		free_gap_buffer();
-		gap_buf.left = buf_left_tmp;
-		gap_buf.right = buf_right_tmp;
-		gap_buf.right_index = gap_buf.right_index + HALF(gap_buf.length);
-		gap_buf.length = DOUBLE(gap_buf.length);
+		free_gap_buffer(ptr);
+		ptr->left = buf_left_tmp;
+		ptr->right = buf_right_tmp;
+		ptr->right_index = ptr->right_index + HALF(ptr->length);
+		ptr->length = DOUBLE(ptr->length);
 	}
-	else if(QUADRUPLE(length_tmp) < gap_buf.length && gap_buf.length > MIN_SIZE_GAP_BUFFER)
+	else if(QUADRUPLE(length_tmp) < ptr->length && ptr->length > MIN_SIZE_GAP_BUFFER)
 	{
-		unsigned int new_half_buf_length = QUARTER(gap_buf.length);
+		unsigned int new_half_buf_length = QUARTER(ptr->length);
 
 		char* buf_left_tmp = (char*)calloc(new_half_buf_length,sizeof(char));
-		memcpy(buf_left_tmp, gap_buf.left, gap_buf.left_index);
+		memcpy(buf_left_tmp, ptr->left, ptr->left_index);
 
 		char* buf_right_tmp = (char*)calloc(new_half_buf_length,sizeof(char));
 		// copy a string only if there is something in the buffer
-		if(HALF(gap_buf.length) > gap_buf.right_index + 1)
+		if(HALF(ptr->length) > ptr->right_index + 1)
 		{
-			memcpy(buf_right_tmp + gap_buf.right_index - new_half_buf_length, 
-				   gap_buf.right + gap_buf.right_index, 
-				   RIGHT_LENGTH(gap_buf_ptr));
+			memcpy(buf_right_tmp + ptr->right_index - new_half_buf_length, 
+				   ptr->right + ptr->right_index, 
+				   RIGHT_LENGTH(ptr));
 		}
 
-		free_gap_buffer();
-		gap_buf.left = buf_left_tmp;
-		gap_buf.right = buf_right_tmp;
-		gap_buf.right_index = gap_buf.right_index - new_half_buf_length;	
-		gap_buf.length = HALF(gap_buf.length);
+		free_gap_buffer(ptr);
+		ptr->left = buf_left_tmp;
+		ptr->right = buf_right_tmp;
+		ptr->right_index = ptr->right_index - new_half_buf_length;	
+		ptr->length = HALF(ptr->length);
 	}
 }
 
-void insert_char(char ch)
+void insert_char(gap_buffer_t* ptr, char ch)
 {
-	*(gap_buf.left + gap_buf.left_index++) = ch;
-	resize();
+	*(ptr->left + ptr->left_index++) = ch;
+	resize(ptr);
 }
 
 //TODO
@@ -156,34 +157,34 @@ void set_cursor_at(gap_buffer_t* ptr, unsigned int index)
 }
 */
 
-void save_file(const char* filename)
+void save_file(const char* filename, gap_buffer_t* ptr)
 {
 	FILE* file = fopen(filename,"w");
 	if(file == NULL)
 	{
 		printf("Error opening %s!\\n",filename);
 	}
-	scanf("%s",gap_buf.left);
-	scanf("%s",gap_buf.right + gap_buf.right_index + 1);
+	scanf("%s",ptr->left);
+	scanf("%s",ptr->right + ptr->right_index + 1);
 	fclose(file);
 }
 
-const char* get_left_message(void)
+const char* get_left_message(gap_buffer_t* ptr)
 {
-	return gap_buf.left;
+	return ptr->left;
 }
 
-const char* get_right_message(void)
+const char* get_right_message(gap_buffer_t* ptr)
 {
-	return gap_buf.right + gap_buf.right_index + 1;
+	return ptr->right + ptr->right_index + 1;
 }
 
-void delete_char(void)
+void delete_char(gap_buffer_t* ptr)
 {
-	if (gap_buf.left_index > 0)
+	if (ptr->left_index > 0)
 	{
-		*(gap_buf.left + gap_buf.left_index--) = '\0';
-		// DECREMENT_CURSOR();
+		*(ptr->left + ptr->left_index--) = '\0';
+		resize(ptr);
 	}
 }
 

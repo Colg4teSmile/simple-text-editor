@@ -41,10 +41,3 @@ void dump_gap_buffer(gap_buffer_t* ptr)
     dump(ptr->left, ptr->length >> 1);
     dump(ptr->right, ptr->length >> 1);
 }
-
-// TODO
-char* get_text(gap_buffer_t* gap_buf_ptr)
-{
-	//char* buf_tmp = (char*)malloc(gap_buf_ptr->length)
-	return NULL;
-}

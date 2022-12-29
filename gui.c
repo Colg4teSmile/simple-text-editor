@@ -24,23 +24,22 @@ static void quit(GtkWidget *window, gpointer data)
 static int update_screen(void* data)
 {
     // simply shows what's in the buffer
-    gtk_text_buffer_set_text(GTK_TEXT_BUFFER(buffer_text_area),get_left_message(),LEFT_LENGTH(gap_buf_ptr));
+    gtk_text_buffer_set_text(GTK_TEXT_BUFFER(buffer_text_area),get_left_message(gap_buf_ptr),LEFT_LENGTH(gap_buf_ptr));
     if (RIGHT_LENGTH(gap_buf_ptr) > 0)
     {
         gtk_text_buffer_get_iter_at_offset(buffer_text_area, &iter, -1);
-        gtk_text_buffer_insert(buffer_text_area, &iter, get_right_message(), RIGHT_LENGTH(gap_buf_ptr));
+        gtk_text_buffer_insert(buffer_text_area, &iter, get_right_message(gap_buf_ptr), RIGHT_LENGTH(gap_buf_ptr));
     }
     // gives a warning if not given
     gtk_text_buffer_get_start_iter(buffer_text_area, &cursor);
     gtk_text_iter_set_offset(&cursor, GET_CURSOR(gap_buf_ptr));
     gtk_text_buffer_place_cursor(buffer_text_area, &cursor);
+
     return TRUE;
 }
 
 static gboolean press_key (GtkWidget *widget, GdkEventKey *event, gpointer data)
 {
-    printf("BEFORE:\n");
-    print_stats(gap_buf_ptr);
     switch (event->keyval)
     {
         case GDK_KEY_a:
@@ -106,20 +105,17 @@ static gboolean press_key (GtkWidget *widget, GdkEventKey *event, gpointer data)
         case GDK_KEY_8:
         case GDK_KEY_9:
         case GDK_KEY_space:
-            insert_char(event->keyval);
-            // gtk_text_iter_forward_cursor_position(&cursor);
+            insert_char(gap_buf_ptr, event->keyval);
             INCREMENT_CURSOR(gap_buf_ptr);
             break;
         case GDK_KEY_BackSpace:
-            delete_char();
+            delete_char(gap_buf_ptr);
             DECREMENT_CURSOR(gap_buf_ptr);
             break;
         case GDK_KEY_Left:
             DECREMENT_CURSOR(gap_buf_ptr);
-            // gtk_text_iter_backward_cursor_position(&cursor);
             break;
         case GDK_KEY_Right:
-            // gtk_text_iter_forward_cursor_position(&cursor);
             INCREMENT_CURSOR(gap_buf_ptr);
             break;
         default:
@@ -127,15 +123,6 @@ static gboolean press_key (GtkWidget *widget, GdkEventKey *event, gpointer data)
     }
 
     update_gap_buffer(gap_buf_ptr);
-    printf("AFTER:\n");
-    print_stats(gap_buf_ptr);
-
-    printf("\n\n");
-
-
-    // printf("cursor_pos: %u\n",gap_buf_ptr->cursor_pos);
-    // dump_gap_buffer(gap_buf_ptr);
-
     return TRUE;
 }
 
